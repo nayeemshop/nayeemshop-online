@@ -1,0 +1,14 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Admin UID বসাও: Firebase Authentication > Users থেকে admin user-এর UID।
+    function isAdmin() {
+      return request.auth != null && request.auth.uid == "PASTE_ADMIN_UID";
+    }
+    match /orders/{orderId} {
+      allow read, update, delete: if isAdmin();
+      // Public order submission will be enabled after the storefront is connected.
+      allow create: if false;
+    }
+  }
+}
