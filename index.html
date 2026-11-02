@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nayeem Shop</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#142b50;color:white;padding:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+.logo{font-size:24px;font-weight:bold}
+nav a{color:white;text-decoration:none;margin:8px}
+.hero{text-align:center;padding:65px 15px;background:#e2ebff}
+.hero h1{font-size:36px}
+.btn{background:#1764d8;color:white;padding:12px 22px;border:0;border-radius:7px;cursor:pointer}
+section{padding:30px 6%}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.card{background:white;padding:15px;border-radius:12px;box-shadow:0 3px 12px #0001}
+.card img{width:100%;height:170px;object-fit:cover;border-radius:8px}
+.price{color:#1764d8;font-size:20px;font-weight:bold}
+.card button{width:100%}
+footer{text-align:center;background:#142b50;color:white;padding:25px}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">NAYEEM SHOP</div>
+<nav>
+<a href="#">Home</a>
+<a href="#products">Products</a>
+<a href="#cart">Cart 🛒</a>
+</nav>
+</header>
+
+<div class="hero">
+<h1>Welcome to Nayeem Shop!</h1>
+<p>আপনার পছন্দের সব পণ্য এখন এক জায়গায়।</p>
+<a href="#products"><button class="btn">Shop Now</button></a>
+</div>
+
+<section id="products">
+<h2>Our Products</h2>
+<div class="products">
+<div class="card">
+<img src="https://placehold.co/300x200?text=Fashion" alt="Fashion">
+<h3>Fashion Collection</h3>
+<p class="price">৳850</p>
+<button class="btn" onclick="add('Fashion Collection',850)">Add to Cart</button>
+</div>
+<div class="card">
+<img src="https://placehold.co/300x200?text=Electronics" alt="Electronics">
+<h3>Electronics</h3>
+<p class="price">৳1200</p>
+<button class="btn" onclick="add('Electronics',1200)">Add to Cart</button>
+</div>
+<div class="card">
+<img src="https://placehold.co/300x200?text=Accessories" alt="Accessories">
+<h3>Accessories</h3>
+<p class="price">৳450</p>
+<button class="btn" onclick="add('Accessories',450)">Add to Cart</button>
+</div>
+</div>
+</section>
+
+<section id="cart">
+<h2>My Cart</h2>
+<div id="items">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
+<h3 id="total">মোট: ৳0</h3>
+</section>
+
+<section>
+<h2>Payment Methods</h2>
+<p>bKash | Nagad | Cash on Delivery</p>
+<p>অর্ডার করতে যোগাযোগ করুন।</p>
+</section>
+
+<footer>
+<p>© 2026 Nayeem Shop</p>
+<p>Thank you for shopping with us!</p>
+</footer>
+
+<script>
+let cart=[];
+function add(name,price){
+cart.push({name,price});
+document.getElementById('items').innerHTML=
+cart.map(x=>x.name+' - ৳'+x.price).join('<br>');
+document.getElementById('total').innerText=
+'মোট: ৳'+cart.reduce((s,x)=>s+x.price,0);
+}
+</script>
+</body>
+</html>
