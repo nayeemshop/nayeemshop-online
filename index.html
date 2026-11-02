@@ -1,93 +1,198 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Nayeem Shop</title>
+<meta name="description" content="Nayeem Shop - আপনার পছন্দের পণ্য অনলাইনে অর্ডার করুন।">
+<title>Nayeem Shop | Online Store</title>
 <style>
+:root{--navy:#142b50;--blue:#1764d8;--bg:#f5f7fb;--muted:#64748b;--green:#16834a}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
-header{background:#142b50;color:white;padding:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
-.logo{font-size:24px;font-weight:bold}
-nav a{color:white;text-decoration:none;margin:8px}
-.hero{text-align:center;padding:65px 15px;background:#e2ebff}
-.hero h1{font-size:36px}
-.btn{background:#1764d8;color:white;padding:12px 22px;border:0;border-radius:7px;cursor:pointer}
-section{padding:30px 6%}
-.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
-.card{background:white;padding:15px;border-radius:12px;box-shadow:0 3px 12px #0001}
-.card img{width:100%;height:170px;object-fit:cover;border-radius:8px}
-.price{color:#1764d8;font-size:20px;font-weight:bold}
-.card button{width:100%}
-footer{text-align:center;background:#142b50;color:white;padding:25px}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,"Noto Sans Bengali",sans-serif;background:var(--bg);color:#172033;line-height:1.55}
+header{background:var(--navy);color:white;padding:16px max(5%,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-size:24px;font-weight:800;letter-spacing:.4px}
+nav{display:flex;gap:16px;flex-wrap:wrap}
+nav a{color:white;text-decoration:none;font-size:14px}
+nav a:hover{text-decoration:underline}
+.hero{text-align:center;padding:64px 18px;background:linear-gradient(135deg,#e2ebff,#f1f5ff)}
+.hero h1{font-size:clamp(30px,5vw,44px);margin:0 0 12px;color:var(--navy)}
+.hero p{font-size:18px;color:#45536b;margin:0 0 22px}
+.btn{display:inline-block;background:var(--blue);color:white;padding:12px 20px;border:0;border-radius:8px;cursor:pointer;text-decoration:none;font-weight:700}
+.btn:hover{filter:brightness(.94)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+section{max-width:1180px;margin:auto;padding:34px 20px}
+h2{color:var(--navy);margin:0 0 18px}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+.card,.panel{background:white;padding:16px;border-radius:14px;box-shadow:0 3px 14px #142b5010}
+.card img{width:100%;height:175px;object-fit:cover;border-radius:9px;background:#e5e7eb}
+.card h3{margin:12px 0 4px}
+.price{color:var(--blue);font-size:20px;font-weight:800;margin:6px 0 12px}
+.note{color:var(--muted);font-size:13px}
+.cart-line{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid #e5eaf2}
+.cart-line button{border:0;background:#fee2e2;color:#991b1b;border-radius:6px;padding:5px 9px;cursor:pointer}
+.total{font-size:20px;font-weight:800;margin-top:14px}
+form{display:grid;gap:12px}
+label{font-weight:700;font-size:14px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:white}
+textarea{min-height:90px;resize:vertical}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.whatsapp{background:var(--green)}
+.sms{background:#475569}
+footer{text-align:center;background:var(--navy);color:white;padding:26px 16px;margin-top:20px}
+footer a{color:white}
+@media(max-width:600px){header{padding:14px 16px}.form-grid{grid-template-columns:1fr}.hero{padding:48px 16px}nav{gap:11px}}
 </style>
 </head>
 <body>
 <header>
-<div class="logo">NAYEEM SHOP</div>
-<nav>
-<a href="#">Home</a>
-<a href="#products">Products</a>
-<a href="#cart">Cart 🛒</a>
-</nav>
+  <div class="logo">NAYEEM SHOP</div>
+  <nav aria-label="Main navigation">
+    <a href="#">Home</a><a href="#products">Products</a><a href="#cart">Cart (<span id="cartCount">0</span>)</a><a href="#order">Order</a><a href="#contact">Contact</a>
+  </nav>
 </header>
 
-<div class="hero">
-<h1>Welcome to Nayeem Shop!</h1>
-<p>আপনার পছন্দের সব পণ্য এখন এক জায়গায়।</p>
-<a href="#products"><button class="btn">Shop Now</button></a>
-</div>
+<main>
+  <div class="hero">
+    <h1>Welcome to Nayeem Shop!</h1>
+    <p>আপনার পছন্দের সব পণ্য এখন এক জায়গায়।</p>
+    <a class="btn" href="#products">Shop Now</a>
+  </div>
 
-<section id="products">
-<h2>Our Products</h2>
-<div class="products">
-<div class="card">
-<img src="https://placehold.co/300x200?text=Fashion" alt="Fashion">
-<h3>Fashion Collection</h3>
-<p class="price">৳850</p>
-<button class="btn" onclick="add('Fashion Collection',850)">Add to Cart</button>
-</div>
-<div class="card">
-<img src="https://placehold.co/300x200?text=Electronics" alt="Electronics">
-<h3>Electronics</h3>
-<p class="price">৳1200</p>
-<button class="btn" onclick="add('Electronics',1200)">Add to Cart</button>
-</div>
-<div class="card">
-<img src="https://placehold.co/300x200?text=Accessories" alt="Accessories">
-<h3>Accessories</h3>
-<p class="price">৳450</p>
-<button class="btn" onclick="add('Accessories',450)">Add to Cart</button>
-</div>
-</div>
-</section>
+  <section id="products">
+    <h2>Our Products</h2>
+    <p class="note">এগুলো নমুনা পণ্য ও দাম। বিক্রির আগে নিজের আসল পণ্যের নাম, ছবি ও দাম দিয়ে বদলে নেবে।</p>
+    <div class="products">
+      <article class="card">
+        <img src="https://placehold.co/600x400/e5e7eb/64748b?text=Fashion" alt="Fashion sample product">
+        <h3>Fashion Collection</h3><p class="price">৳850</p>
+        <button class="btn" type="button" onclick="addToCart('Fashion Collection',850)">Add to Cart</button>
+      </article>
+      <article class="card">
+        <img src="https://placehold.co/600x400/e5e7eb/64748b?text=Electronics" alt="Electronics sample product">
+        <h3>Electronics</h3><p class="price">৳1200</p>
+        <button class="btn" type="button" onclick="addToCart('Electronics',1200)">Add to Cart</button>
+      </article>
+      <article class="card">
+        <img src="https://placehold.co/600x400/e5e7eb/64748b?text=Accessories" alt="Accessories sample product">
+        <h3>Accessories</h3><p class="price">৳450</p>
+        <button class="btn" type="button" onclick="addToCart('Accessories',450)">Add to Cart</button>
+      </article>
+    </div>
+  </section>
 
-<section id="cart">
-<h2>My Cart</h2>
-<div id="items">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
-<h3 id="total">মোট: ৳0</h3>
-</section>
+  <section id="cart">
+    <div class="panel">
+      <h2>My Cart</h2>
+      <div id="cartItems" aria-live="polite">এখনো কোনো পণ্য যোগ করা হয়নি।</div>
+      <div class="total" id="cartTotal">মোট: ৳0</div>
+      <p class="note">অর্ডার করতে কার্টে অন্তত একটি পণ্য যোগ করুন।</p>
+    </div>
+  </section>
 
-<section>
-<h2>Payment Methods</h2>
-<p>bKash | Nagad | Cash on Delivery</p>
-<p>অর্ডার করতে যোগাযোগ করুন।</p>
-</section>
+  <section id="order">
+    <div class="panel">
+      <h2>Place Your Order</h2>
+      <p class="note">ফর্ম পূরণ করে অর্ডার পাঠালে WhatsApp-এ তোমার অর্ডারের মেসেজ তৈরি হবে। Send চাপলেই অর্ডারটি দোকানে পাঠানো হবে।</p>
+      <form id="orderForm" onsubmit="sendOrder(event)">
+        <div class="form-grid">
+          <div><label for="customer">আপনার নাম *</label><input id="customer" required maxlength="80" placeholder="আপনার নাম"></div>
+          <div><label for="phone">মোবাইল নম্বর *</label><input id="phone" required inputmode="tel" maxlength="20" placeholder="01XXXXXXXXX"></div>
+        </div>
+        <div><label for="address">সম্পূর্ণ ডেলিভারি ঠিকানা *</label><textarea id="address" required maxlength="500" placeholder="বাড়ি/রোড, এলাকা, জেলা"></textarea></div>
+        <div><label for="payment">পেমেন্ট পদ্ধতি *</label>
+          <select id="payment" required>
+            <option value="Cash on Delivery">Cash on Delivery</option>
+            <option value="bKash (পেমেন্টের তথ্য WhatsApp-এ জানব)">bKash</option>
+            <option value="Nagad (পেমেন্টের তথ্য WhatsApp-এ জানব)">Nagad</option>
+          </select>
+        </div>
+        <button class="btn whatsapp" type="submit">WhatsApp-এ অর্ডার পাঠান</button>
+      </form>
+      <p class="note">নোট: bKash/Nagad-এর সরাসরি অনলাইন পেমেন্ট এখনো যুক্ত নেই। পেমেন্টের তথ্য WhatsApp-এ নিশ্চিত করা হবে।</p>
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="panel">
+      <h2>Contact Nayeem Shop</h2>
+      <p>অর্ডার বা যেকোনো তথ্যের জন্য যোগাযোগ করুন।</p>
+      <div class="actions">
+        <a class="btn whatsapp" href="https://wa.me/8801740833433" target="_blank" rel="noopener">WhatsApp</a>
+        <a class="btn sms" href="sms:+8801740833433">Send SMS</a>
+      </div>
+    </div>
+  </section>
+</main>
 
 <footer>
-<p>© 2026 Nayeem Shop</p>
-<p>Thank you for shopping with us!</p>
+  <p><strong>NAYEEM SHOP</strong></p>
+  <p>© 2026 Nayeem Shop. All Rights Reserved.</p>
 </footer>
 
 <script>
-let cart=[];
-function add(name,price){
-cart.push({name,price});
-document.getElementById('items').innerHTML=
-cart.map(x=>x.name+' - ৳'+x.price).join('<br>');
-document.getElementById('total').innerText=
-'মোট: ৳'+cart.reduce((s,x)=>s+x.price,0);
+const WHATSAPP_NUMBER = "8801740833433";
+let cart = [];
+
+function addToCart(name, price) {
+  const existing = cart.find(item => item.name === name);
+  if (existing) existing.quantity += 1;
+  else cart.push({name:name, price:price, quantity:1});
+  renderCart();
+}
+
+function removeFromCart(index) {
+  cart.splice(index, 1);
+  renderCart();
+}
+
+function renderCart() {
+  const items = document.getElementById("cartItems");
+  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  document.getElementById("cartCount").textContent = count;
+  document.getElementById("cartTotal").textContent = "মোট: ৳" + total;
+  if (cart.length === 0) {
+    items.textContent = "এখনো কোনো পণ্য যোগ করা হয়নি।";
+    return;
+  }
+  items.innerHTML = "";
+  cart.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "cart-line";
+    const label = document.createElement("span");
+    label.textContent = item.name + " × " + item.quantity + " — ৳" + (item.price * item.quantity);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.textContent = "বাদ দিন";
+    remove.setAttribute("aria-label", item.name + " কার্ট থেকে বাদ দিন");
+    remove.addEventListener("click", () => removeFromCart(index));
+    row.appendChild(label);
+    row.appendChild(remove);
+    items.appendChild(row);
+  });
+}
+
+function sendOrder(event) {
+  event.preventDefault();
+  if (cart.length === 0) {
+    alert("আগে কার্টে অন্তত একটি পণ্য যোগ করুন।");
+    document.getElementById("products").scrollIntoView();
+    return;
+  }
+  const name = document.getElementById("customer").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const address = document.getElementById("address").value.trim();
+  const payment = document.getElementById("payment").value;
+  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const productLines = cart.map(item => item.name + " x " + item.quantity + " = Tk " + (item.price * item.quantity)).join("\n");
+  const message = "NAYEEM SHOP - NEW ORDER\n\nCustomer: " + name +
+    "\nPhone: " + phone + "\nAddress: " + address +
+    "\n\nProducts:\n" + productLines + "\n\nTotal: Tk " + total +
+    "\nPayment: " + payment;
+  const url = "https://wa.me/" + WHATSAPP_NUMBER + "?text=" + encodeURIComponent(message);
+  window.open(url, "_blank", "noopener");
 }
 </script>
 </body>
