@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nayeem Shop | Admin Panel</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f3f6fb;color:#172033;font-family:Arial,"Noto Sans Bengali",sans-serif}
+header{background:#142b50;color:white;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header a{color:white}main{max-width:1100px;margin:30px auto;padding:0 16px}.panel{background:white;border-radius:14px;padding:22px;box-shadow:0 4px 18px #142b5012;margin-bottom:18px}
+h1,h2{margin-top:0;color:#142b50}.muted{color:#64748b;font-size:14px}
+input,select,button{font:inherit;padding:11px;border:1px solid #cbd5e1;border-radius:8px}input{width:100%;margin:6px 0 12px}
+button{background:#1764d8;color:white;border:0;cursor:pointer;font-weight:700}button.secondary{background:#475569}button:disabled{opacity:.5}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.row>*{flex:1}.hidden{display:none}
+table{width:100%;border-collapse:collapse;min-width:720px}th,td{text-align:left;padding:12px;border-bottom:1px solid #e5eaf2;vertical-align:top}th{background:#f8fafc}
+.table-wrap{overflow:auto}.status{min-width:130px}.message{padding:12px;border-radius:8px;background:#fff7ed;color:#9a3412;margin:12px 0}
+@media(max-width:600px){main{margin:18px auto}.panel{padding:16px}}
+</style>
+</head>
+<body>
+<header><strong>NAYEEM SHOP — ADMIN</strong><a href="./">ওয়েবসাইটে ফিরে যান</a></header>
+<main>
+<section class="panel" id="loginPanel">
+<h1>Admin Login</h1><p class="muted">শুধু অনুমোদিত দোকান পরিচালকের জন্য।</p>
+<div id="setupNotice" class="message">Firebase সেটআপ বাকি। নিচের কোডে Firebase project config বসানোর পর লগইন চালু হবে।</div>
+<form id="loginForm">
+<label>Admin Email</label><input id="email" type="email" required autocomplete="username">
+<label>Password</label><input id="password" type="password" required autocomplete="current-password">
+<button type="submit" id="loginButton">Login</button>
+</form><p id="loginError" class="muted" role="alert"></p>
+</section>
+<section class="panel hidden" id="dashboard">
+<div class="row"><div><h1>অর্ডার ম্যানেজমেন্ট</h1><p class="muted" id="signedIn"></p></div><button class="secondary" id="logout">Logout</button></div>
+<div class="row"><div><strong id="orderCount">0</strong><div class="muted">মোট অর্ডার</div></div><button id="refresh">Refresh Orders</button></div>
+<p id="loadMessage" class="muted">অর্ডার লোড হচ্ছে...</p>
+<div class="table-wrap"><table><thead><tr><th>সময়</th><th>ক্রেতা</th><th>পণ্য</th><th>মোট</th><th>পেমেন্ট</th><th>স্ট্যাটাস</th></tr></thead><tbody id="ordersBody"></tbody></table></div>
+</section>
+</main>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Firebase Console > Project settings > Your apps থেকে config বসাও। এখানে কোনো password/API secret বসাবে না।
+const firebaseConfig = {
+  apiKey: "PASTE_FIREBASE_API_KEY",
+  authDomain: "PASTE_PROJECT_ID.firebaseapp.com",
+  projectId: "PASTE_PROJECT_ID",
+  appId: "PASTE_APP_ID"
+};
+const configured = !Object.values(firebaseConfig).some(v => String(v).startsWith("PASTE_"));
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+const loginButton = document.getElementById("loginButton");
+const loginPanel = document.getElementById("loginPanel");
+const dashboard = document.getElementById("dashboard");
+let auth, db;
+if (configured) {
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app); db = getFirestore(app);
+  document.getElementById("setupNotice").classList.add("hidden");
+  onAuthStateChanged(auth, user => {
+    loginPanel.classList.toggle("hidden", !!user);
+    dashboard.classList.toggle("hidden", !user);
+    if (user) { document.getElementById("signedIn").textContent = "Logged in: " + user.email; loadOrders(); }
+  });
+} else {
+  loginButton.disabled = true;
+  loginError.textContent = "Firebase config বসানো হলে লগইন চালু হবে।";
+}
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault(); if (!configured) return;
+  loginButton.disabled = true; loginError.textContent = "";
+  try { await signInWithEmailAndPassword(auth, document.getElementById("email").value.trim(), document.getElementById("password").value); }
+  catch(err) { loginError.textContent = "লগইন হয়নি। ইমেইল/পাসওয়ার্ড ও Firebase Auth সেটিংস পরীক্ষা করো।"; }
+  finally { loginButton.disabled = false; }
+});
+document.getElementById("logout").addEventListener("click", () => signOut(auth));
+document.getElementById("refresh").addEventListener("click", loadOrders);
+async function loadOrders() {
+  const body = document.getElementById("ordersBody"), msg = document.getElementById("loadMessage");
+  msg.textContent = "অর্ডার লোড হচ্ছে..."; body.replaceChildren();
+  try {
+    const snap = await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+    document.getElementById("orderCount").textContent = snap.size;
+    if (!snap.size) msg.textContent = "এখনো কোনো অর্ডার নেই।";
+    else msg.textContent = "";
+    snap.forEach(item => {
+      const o=item.data(), tr=document.createElement("tr");
+      const date=o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString("bn-BD") : "সময় নেই";
+      const products=Array.isArray(o.items) ? o.items.map(p=>`${p.name} × ${p.quantity}`).join(", ") : (o.products || "");
+      const values=[date, (o.name||"")+"\n"+(o.phone||"")+"\n"+(o.address||""), products, "৳"+(o.total||0), o.payment||""];
+      values.forEach(v=>{const td=document.createElement("td");td.style.whiteSpace="pre-line";td.textContent=v;tr.appendChild(td);});
+      const td=document.createElement("td"), select=document.createElement("select");
+      select.className="status";
+      ["Pending","Confirmed","Processing","Delivered","Cancelled"].forEach(s=>{const op=document.createElement("option");op.value=s;op.textContent=s;select.appendChild(op);});
+      select.value=o.status||"Pending";
+      select.addEventListener("change",async()=>{select.disabled=true;try{await updateDoc(doc(db,"orders",item.id),{status:select.value,updatedAt:serverTimestamp()});}catch(e){alert("স্ট্যাটাস আপডেট হয়নি। Firestore rules পরীক্ষা করো।");select.value=o.status||"Pending";}finally{select.disabled=false;}});
+      td.appendChild(select);tr.appendChild(td);body.appendChild(tr);
+    });
+  } catch(e) { msg.textContent="অর্ডার লোড হয়নি। Firestore database/rules এবং Firebase config পরীক্ষা করো।"; }
+}
+</script>
+</body></html>
